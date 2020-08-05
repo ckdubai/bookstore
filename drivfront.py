@@ -9,21 +9,27 @@ import driver_backend
 
 filename=''
 save_dir='driver_images/'
-img=''
+save_img=''
+image_path=''
 
-
+""" check for folder exist otherwise create it """
 if not os.path.exists('driver_images'):
     os.makedirs('driver_images')
 
+def save_image():
+   #if not str(os.path.exists(filena)):
+    #print("image path is"+image_path)
+    save_img.save(image_path,'JPEG')
+
+
+
 def add_command():
-
-    driver_backend.insert(ID_text.get(),name_text.get(),vehicle_text.get(),plate_text.get(),location_text.get(),filename)
+    #print("image path = "+image_path)
+    driver_backend.insert(ID_text.get(),name_text.get(),vehicle_text.get(),plate_text.get(),location_text.get(),image_path)
     view_command()
-    #cv2.imwrite(save_dir, image_name)
+    save_image()
+    clear_textfield()
 
-
-
-    #clear_textfield()
 def view_command():
     tree.delete(*tree.get_children())
     for row in driver_backend.view():
@@ -34,17 +40,15 @@ def get_selected_row(event):
 
     clear_textfield()
     global selected_tuple
-
     for selected_tuple in tree.selection():
         global id
-        id,emp_id,name,vehicle,plate_no,work_location,filename = tree.item(selected_tuple, 'values')
-        print(filename)
+        id,emp_id,name,vehicle,plate_no,work_location,image_path = tree.item(selected_tuple, 'values')
         e1.insert(END, emp_id)
         e2.insert(END, name)
         e3.insert(END, vehicle)
         e4.insert(END, plate_no)
         e5.insert(END, work_location)
-        display_image(filename)
+        display_image(image_path)
 
 def clear_textfield():
     e1.delete(0,END)
@@ -54,10 +58,12 @@ def clear_textfield():
     e5.delete(0,END)
 
 def update_command():
-
-    driver_backend.update(id,ID_text.get(),name_text.get(),vehicle_text.get(),plate_text.get(),location_text.get(),filename)
+    #print(image_path)
+    driver_backend.update(id,ID_text.get(),name_text.get(),vehicle_text.get(),plate_text.get(),location_text.get(),image_path)
+    save_image()
     view_command()
     clear_textfield()
+
 
 def search_command():
     tree.delete(*tree.get_children())
@@ -149,17 +155,20 @@ def openfn():
 
 def open_img():
     openfn()
-    image_name = getImageName(filename)
+    global image_path, save_img
+    image_path = getImagePath(filename)
+    #print("image path = "+image_path)
+    save_img=Image.open(filename)
     img = Image.open(filename)
-    img.save(image_name,'JPEG')
+    #img.save(image_name,'JPEG')
     img = img.resize((55, 65), Image.ANTIALIAS)
     img = ImageTk.PhotoImage(img)
     panel = Label(window, image=img)
     panel.image = img
     panel.grid(row=0,column=4,rowspan=3,columnspan=2)
 
-def display_image(filename):
-    img = Image.open(filename)
+def display_image(image_path):
+    img = Image.open(image_path)
     img = img.resize((55, 65), Image.ANTIALIAS)
     img = ImageTk.PhotoImage(img)
     panel = Label(window, image=img)
@@ -167,7 +176,8 @@ def display_image(filename):
     panel.grid(row=0,column=4,rowspan=3,columnspan=2)
 
 
-def getImageName(filename):
+def getImagePath(filename):
+    global filena
     filena = filename.split('/')[-1]
     new_path = save_dir+filena
     return new_path

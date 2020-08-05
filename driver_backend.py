@@ -45,7 +45,7 @@ def search(emp_id="",name="",vehicle="",plate_no="",work_location=""):
     return rows
 
 connect()
-
+#print(view())
 #insert("jamandhi","Mayoori",1977,55355000)
 #delete(2)
 #update(3,"Nalukettuu","MT Vasudevan",1999,21312)
